@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import Image from './components/image'
+import Image from './components/Image'
 
 import { useEffect } from 'react'
 import { useState } from 'react'
