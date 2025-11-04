@@ -28,7 +28,7 @@ const SeatAvailabilitySchema = new mongoose.Schema({
 SeatAvailabilitySchema.index({ date: 1, slot: 1 }, { unique: true });
 
 const BookingSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
+  username: { type: String, required: true },
   email: { type: String, required: true },
   date: { type: String, required: true },
   slot: { type: String, required: true },

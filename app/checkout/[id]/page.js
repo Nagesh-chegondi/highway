@@ -1,12 +1,15 @@
+"use client"
 import React from 'react'
 import Link from 'next/link'
+import { use } from 'react'
 
-function page() {
+function page({params}) {
+    const {id}   = use(params)
   return (
     <>
     <div className='ml-[150px] mt-[80px] flex gap-[40px]'>
-        <div className='flex gap-[10px] relative left-[130px] top-[-60px] mt-[20px] mb-[20px] h-[25px] justify-center items-center'>
-        <img className='w-[13px] h-[13px]' src="/arrow_back.png" alt="" />
+        <div className='cursor-pointer flex gap-[10px] relative left-[130px] top-[-60px] mt-[20px] mb-[20px] h-[25px] justify-center items-center'>
+   <Link href={`/details/${id}`} > <img className=' w-[13px] h-[13px]' src="/arrow_back.png" alt="" /></Link>    
         <p className='font-inter text-[14px] font-medium'>Checkout</p>
         </div>
     <div className='w-[739px] bg-[#EFEFEF] h-[200px] px-[24px] py-[20px] rounded-[12px]'>

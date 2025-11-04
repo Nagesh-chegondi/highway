@@ -6,8 +6,9 @@ import { connectDB, SeatAvailability, Booking } from "../../lib/db.js";
 
 export async function GET() {
     await connectDB()
+    const now = new Date();
     
-  const today = new Date();
+  const today = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
   const result = [];
 
   const slots = ["7AM", "9AM", "11AM", "1PM"];
