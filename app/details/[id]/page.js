@@ -10,11 +10,8 @@ import { use } from 'react'
 
 function Page({ params }) {
   const {id} = use(params)
-  const {producti, setproducti ,slots,indexi,setindex} = useContest()
+  const {producti, setproducti ,slots,indexi,setindex,selectedDate,setSelectedDate,slotdata,setslotdata,slotinfo,setslotinfo} = useContest()
   const[detailimage,setdetailimage] = useState()
-  const [selectedDate, setSelectedDate] = useState(new Date(Date.now()));
-  const [slotdata, setslotdata] = useState([]);
-  const [slotinfo, setslotinfo] = useState([]);
 
 
 
@@ -99,7 +96,10 @@ console.log(producti);
 
   if (!detailimage) {
     return (
-      <p>loading.....</p>
+       
+     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+  <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+</div>
     )
   }
 

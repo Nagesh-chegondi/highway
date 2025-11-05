@@ -11,7 +11,7 @@ import { createContext ,useState , useContext } from 'react'
            const slots =["7:00 am","9:00 am","11:00 am","1:00 am"]
             const[indexi,setindex] = useState(slots[0]);
   return (
-      <ContextContexti.Provider value={{ producti, setproducti ,slotdata,setslotdata,slotinfo,setslotinfo,slots,indexi,setindex }}>
+      <ContextContexti.Provider value={{ producti, setproducti ,slotdata,setslotdata,slotinfo,setslotinfo,slots,indexi,setindex,selectedDate,setSelectedDate }}>
       {children}
     </ContextContexti.Provider>
   )

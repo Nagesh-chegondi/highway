@@ -2,9 +2,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { use } from 'react'
+import { useContest } from '@/app/context/CreateContext'
 
 function page({params}) {
     const {id}   = use(params)
+    const{selectedDate,indexi} = useContest();
   return (
     <>
     <div className='ml-[150px] mt-[80px] flex gap-[40px]'>
@@ -58,8 +60,8 @@ function page({params}) {
     <div className='w-[387px] px-[24px] py-[24px] bg-[#EFEFEF] flex flex-col gap-[16px] rounded-[12px]'>
         <div className='flex flex-col gap-[10px]'>
             <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Experience <span className='text-[#161616] font-Inter text-[16px] capitalize'>kakati</span></p>
-            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Date <span  className='text-[#161616] font-Inter text-[16px] capitalize' >2025-10-12</span></p>
-            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Time <span className='text-[#161616] font-Inter text-[16px] capitalize' >09:00 am</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Date <span  className='text-[#161616] font-Inter text-[16px] capitalize' >{selectedDate.toLocaleDateString('en-GB').split('/').join('-')}</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Time <span className='text-[#161616] font-Inter text-[16px] capitalize' >{indexi}</span></p>
             <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Qty  <span  className='text-[#161616] font-Inter text-[16px] capitalize'>1</span></p>
         </div>
         <div className='flex flex-col gap-[10px]'>
