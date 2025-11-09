@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar"; 
 import { CreateContext } from "./context/CreateContext";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,10 +25,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       > 
-      <CreateContext>
-        <Navbar/>
-        {children}
-        </CreateContext>
+    <CreateContext>
+      <Navbar/>
+      {children}
+    </CreateContext>
       </body>
     </html>
   );

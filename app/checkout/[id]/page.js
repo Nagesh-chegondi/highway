@@ -6,7 +6,44 @@ import { useContest } from '@/app/context/CreateContext'
 
 function page({params}) {
     const {id}   = use(params)
-    const{selectedDate,indexi} = useContest();
+    const{selectedDate,indexi,detailimage} = useContest();
+    
+  async function checkouts(){
+    if(!detailimage) {
+      console.error("No detail image data available");
+      return;
+    }
+
+    try { 
+        console.log("hijnsdkjnjdf")
+        console.log(detailimage)
+        console.log(detailimage.name)
+        console.log("vaishnavi")
+      const res = await fetch('/api/checkouts', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          place: detailimage.name,
+          date: selectedDate.toLocaleDateString('en-CA'),
+          slot: indexi
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Booking successful:", data);
+      return data;
+    } catch (error) {
+      console.error("Booking failed:", error);
+      // You might want to show an error message to the user here
+    }
+  }
+  
   return (
     <>
     <div className='ml-[150px] mt-[80px] flex gap-[40px]'>
@@ -59,7 +96,7 @@ function page({params}) {
     </div>
     <div className='w-[387px] px-[24px] py-[24px] bg-[#EFEFEF] flex flex-col gap-[16px] rounded-[12px]'>
         <div className='flex flex-col gap-[10px]'>
-            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Experience <span className='text-[#161616] font-Inter text-[16px] capitalize'>kakati</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Experience <span className='text-[#161616] font-Inter text-[16px] capitalize'>{detailimage?.place}</span></p>
             <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Date <span  className='text-[#161616] font-Inter text-[16px] capitalize' >{selectedDate.toLocaleDateString('en-GB').split('/').join('-')}</span></p>
             <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Time <span className='text-[#161616] font-Inter text-[16px] capitalize' >{indexi}</span></p>
             <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Qty  <span  className='text-[#161616] font-Inter text-[16px] capitalize'>1</span></p>
@@ -70,14 +107,16 @@ function page({params}) {
         </div>
         <div className='h-[1px] bg-[#D9D9D9]'></div>
         <p className='font-Inter text-[20px] font-medium flex justify-between'>Total <span>958</span></p>
-        <div className='px-[12px] py-[10px] bg-[#FFD643] text-center rounded-[8px]'>
-         <Link href={'/confirmed'}><button>Pay and Confirm</button> </Link>   
+        <div className='cursor-pointer px-[12px] py-[10px] bg-[#FFD643] text-center rounded-[8px]'>
+         <Link href={'/confirmed'}><button onClick={()=>checkouts()}>Pay and Confirm</button> </Link>   
             </div>
 
     </div>
     </div>
     </>
   )
+
+
 }
 
 export default page

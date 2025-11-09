@@ -1,5 +1,6 @@
 
 import { connectDB, SeatAvailability, Booking } from "../../lib/db.js";
+import { experiences } from "@/app/data/product.js";
 
 
 
@@ -12,28 +13,40 @@ export async function GET() {
   const result = [];
 
   const slots = ["7AM", "9AM", "11AM", "1PM"];
+  for(const experience of experiences){
+    for (let i = 0; i < 5; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const formattedDate = date.toISOString().split("T")[0];
 
-  for (let i = 0; i < 5; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const formattedDate = date.toISOString().split("T")[0];
+      for (const slot of slots) {
+        try {
+          const existing = await SeatAvailability.findOne({ 
+            place:experience.name,
+            date: formattedDate,
+            slot: slot
+          });
 
-    for (const slot of slots) {
-      const existing = await SeatAvailability.findOne({ date: formattedDate, slot });
-
-      if (!existing) {
-        const doc = await SeatAvailability.create({
-          date: formattedDate,
-          slot,
-          totalSeats: 100,
-          bookedSeats: 0,
-        });
-        result.push(doc);
-      } else {
-        result.push(existing);
+          if (!existing) {
+            const doc = await SeatAvailability.create({
+              place: experience.name,
+              date: formattedDate,
+              slot: slot,
+              bookedSeats: 0,
+            });
+            result.push(doc);
+          } else {
+            result.push(existing);
+          }
+        } catch (error) {
+          if (error.code === 11000) { // Skip duplicate key errors
+            throw error;
+          }
+        }
       }
     }
   }
+
 
   return Response.json({ success: true, data: result });
 }
@@ -59,10 +72,10 @@ export async function POST(req) {
   }
 
   // Find seat availability
-  const availability = await SeatAvailability.findOne({ date, slot });
+  const availability = await SeatAvailability.findOne({ date, place: userId });
   if (!availability) {
     return Response.json(
-      { success: false, message: "Slot not found for this date." },
+      { success: false, message: "Slot not found for this date and place." },
       { status: 404 }
     );
   }

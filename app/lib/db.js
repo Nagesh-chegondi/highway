@@ -20,12 +20,13 @@ export const connectDB = async () => {
 // --------------------
 
 const SeatAvailabilitySchema = new mongoose.Schema({
+  place:{type:String,required:true},
   date: { type: String, required: true },
-  slot: { type: String, required: true },
+  slot:{type:String,required:true},
   bookedSeats: { type: Number, default: 0 },
 });
 
-SeatAvailabilitySchema.index({ date: 1, slot: 1 }, { unique: true });
+
 
 const BookingSchema = new mongoose.Schema({
   username: { type: String, required: true },
@@ -35,7 +36,7 @@ const BookingSchema = new mongoose.Schema({
   seats: { type: Number, default: 0 },
 });
 
-BookingSchema.index({ userId: 1, date: 1, slot: 1 }, { unique: true });
+
 
 // ✅ Prevent model recompilation in Next.js hot reload
 export const SeatAvailability =

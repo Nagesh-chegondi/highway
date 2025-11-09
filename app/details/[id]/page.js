@@ -3,21 +3,15 @@ import React, { useContext } from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
-import {ContextContext} from '../../context/CreateContext'
+import { CreateContext } from '../../context/CreateContext'
 import { useContest } from '../../context/CreateContext'
 import Image from 'next/image'
 import { use } from 'react'
 
 function Page({ params }) {
   const {id} = use(params)
-  const {producti, setproducti ,slots,indexi,setindex,selectedDate,setSelectedDate,slotdata,setslotdata,slotinfo,setslotinfo} = useContest()
-  const[detailimage,setdetailimage] = useState()
-
-
-
+  const {producti,setproducti,slots,indexi,setindex,selectedDate,setSelectedDate,slotdata,setslotdata,slotinfo,setslotinfo,detailimage,setdetailimage} = useContest()
   
-
-
   // Generate next 5 days (including today)
   const today = new Date();
   const dates = Array.from({ length: 5 }, (_, i) => {
@@ -34,14 +28,14 @@ function Page({ params }) {
         const res = await fetch("/api/auto");
         if (!res.ok) throw new Error("Failed to fetch slots");
         const data = await res.json();
-        console.log("Slots:", data);
-        setslotdata(data.data)
+        console.log("Slots data:", data);
+        setslotdata(data.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching slots:", err);
       }
     }
     getSlots();
-  }, [])
+  },[])
   useEffect(() => {
     console.log('hi')
     console.log(slotinfo)
@@ -53,35 +47,26 @@ function Page({ params }) {
       console.log('o')
     }
   }, [slotinfo])
-useEffect(()=>{
-console.log("hey i got you");
-console.log(producti);
-},[producti])
- 
   useEffect(() => {
-    const formatted = selectedDate.toLocaleDateString('en-CA', {
-
-    });;
-
-    const numberofslots = slotdata.filter(person => person.date === formatted)
-    setslotinfo(prev => [...numberofslots]);
-
-    console.log(numberofslots);
-    console.log(selectedDate);
-    console.log(formatted)
-
+    if (selectedDate && slotdata.length > 0) {
+      const formatted = selectedDate.toLocaleDateString('en-CA');
+      const numberofslots = slotdata.filter(slot => slot.date === formatted);
+      setslotinfo(numberofslots);
+      
+      console.log("Formatted date:", formatted);
+      console.log("Filtered slots:", numberofslots);
+    }
   }, [slotdata, selectedDate])
 
    useEffect(() => {
     async function getdata() {
-      const res = await fetch('/api/experience');
+      const res = await fetch('/api/experience',)
+       
       const data = await res.json();
         const prod = data.find((item) => item.id.toString() === id);
       console.log( "rebel",prod)
-      setdetailimage(prod)
-      console.log("hi")
-      console.log(detailimage)
-      console.log("funny")
+      setdetailimage(prod);
+      localStorage.setItem('detailimage', JSON.stringify(prod));
 
     }
   if(id)  getdata();
@@ -94,12 +79,11 @@ console.log(producti);
     
   
 
-  if (!detailimage) {
+  if (!detailimage || !detailimage.image) {
     return (
-       
-     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-  <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-</div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
     )
   }
 
@@ -113,7 +97,9 @@ console.log(producti);
             <p className='font-Inter text-[14px] font-medium'>Details</p>
           </div>
 
-          <img className='w-[765px] h-[381px] rounded-[12px]' src={detailimage.image.src} alt="image" />
+          {detailimage && detailimage.image && (
+            <img className='w-[765px] h-[381px] rounded-[12px]' src={detailimage.image.src} alt="image" />
+          )}
           
         </div>
         <div className='w-[387px] h-[305px] p-[24px] rounded-[12px] mt-[60px] bg-[#EFEFEF] box-border'>
