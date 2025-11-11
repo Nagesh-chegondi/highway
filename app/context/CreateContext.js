@@ -14,7 +14,6 @@ import { createContext, useState, useContext, useEffect } from 'react'
   })
      const[producti,setproducti] = useState([])
        const [slotdata, setslotdata] = useState([]);
-       const [slotinfo, setslotinfo] = useState([]);
          const [selectedDate, setSelectedDate] = useState(new Date(Date.now()));
            const slots =["7AM","9AM","11AM","1PM"]
             const[indexi,setindex] = useState(slots[0]);
@@ -40,7 +39,7 @@ import { createContext, useState, useContext, useEffect } from 'react'
               };
             }, []);
   return (
-      <ContextContexti.Provider value={{ producti, setproducti ,slotdata,setslotdata,slotinfo,setslotinfo,slots,indexi,setindex,selectedDate,setSelectedDate,detailimage,setdetailimage }}>
+      <ContextContexti.Provider value={{ producti, setproducti ,slotdata,setslotdata,slots,indexi,setindex,selectedDate,setSelectedDate,detailimage,setdetailimage }}>
       
       {children}
     </ContextContexti.Provider>

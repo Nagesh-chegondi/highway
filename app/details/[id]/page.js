@@ -10,7 +10,8 @@ import { use } from 'react'
 
 function Page({ params }) {
   const {id} = use(params)
-  const {producti,setproducti,slots,indexi,setindex,selectedDate,setSelectedDate,slotdata,setslotdata,slotinfo,setslotinfo,detailimage,setdetailimage} = useContest()
+  const {producti,setproducti,slots,indexi,setindex,selectedDate,setSelectedDate,slotdata,setslotdata,setdetailimage,detailimage} = useContest()
+   const [slotinfo, setslotinfo] = useState([]);
   
   // Generate next 5 days (including today)
   const today = new Date();
@@ -50,7 +51,9 @@ function Page({ params }) {
   useEffect(() => {
     if (selectedDate && slotdata.length > 0) {
       const formatted = selectedDate.toLocaleDateString('en-CA');
-      const numberofslots = slotdata.filter(slot => slot.date === formatted);
+      console.log("bharathi jha")
+      const numberofslots = slotdata.filter(slot => slot.date === formatted&&slot.place===detailimage.name);
+      console.log("haaaaaaaaa")
       setslotinfo(numberofslots);
       
       console.log("Formatted date:", formatted);
@@ -79,7 +82,7 @@ console.log(producti);
     
   
 
-  if (!detailimage || !detailimage.image) {
+  if (!detailimage || !detailimage.image||slotinfo.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -119,7 +122,7 @@ console.log(producti);
       </div>
       <div className='mt-[32px] w-[765px] flex flex-col gap-[32px]'>
         <div className='flex flex-col gap-[16px]  '>
-          <p className='font-Inter text-[24px] font-medium capitalize'>{producti.name}</p>
+          <p className='font-Inter text-[24px] font-medium capitalize'>{detailimage.name}</p>
           <p className='font-Inter text-[16px] text-[#6C6C6C]'>Curated small-group experience. Certified guide. Safety first with gear included. Helmet and Life jackets along with an expert will accompany in kayaking.</p>
         </div>
         <div className='flex flex-col gap-[24px]'>
@@ -154,10 +157,10 @@ console.log(producti);
                 {slots.map((item,index)=>{
                   const isActiva = indexi===slots[index]
                   return(
-                   < button onClick={()=>setindex(slots[index])} key={index} className= {` ${isActiva?"bg-[#FFd643]":"bg-gray-100"} ${isActiva?"border-none":"box-border border-[0.6px] border-solid border-[#BDBDBD]"} px-[12px] py-[8px]  rounded-[4px] `}>{item}<span className={`   ${(100 - (slotinfo[0]?.bookedSeats || 0)) > 10
+                   < button onClick={()=>setindex(slots[index])} key={index} className= {` ${isActiva?"bg-[#FFd643]":"bg-gray-100"} ${isActiva?"border-none":"box-border border-[0.6px] border-solid border-[#BDBDBD]"} px-[12px] py-[8px]  rounded-[4px] `}>{item}<span className={`   ${(100 - (slotinfo[index]?.bookedSeats || 0)) > 10
                     ? "text-green-500 border-green-400"
                     : "text-red-500 border-red-400"
-                  }`}> {100 - (slotinfo[0]?.bookedSeats || 0)}  left</span></button>
+                  }`}> {100 - (slotinfo[index]?.bookedSeats || 0)}  left</span></button>
                 )})}
               </div>
               <p className='font-Inter text-[12px] font-regular text-[#838383]'>All times are in IST (GMT +5:30)</p>
