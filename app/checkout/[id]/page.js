@@ -3,22 +3,64 @@ import React from 'react'
 import Link from 'next/link'
 import { use } from 'react'
 import { useContest } from '@/app/context/CreateContext'
+import { useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 function page({params}) {
     const {id}   = use(params)
     const{selectedDate,indexi,detailimage} = useContest();
+    const email_ref = useRef()
+    const username_ref = useRef()
+    const router = useRouter()
+    const [isClient, setIsClient] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
     
   async function checkouts(){
-    if(!detailimage) {
-      console.error("No detail image data available");
+    const username = username_ref.current?.value;
+    const email = email_ref.current?.value;
+
+    console.log("Form values:", { username, email, place: detailimage?.name, date: selectedDate, slot: indexi });
+
+    if (!username || !email) {
+      alert("Please fill in all required fields (name and email)");
       return;
     }
 
-    try { 
-        console.log("hijnsdkjnjdf")
-        console.log(detailimage)
-        console.log(detailimage.name)
-        console.log("vaishnavi")
+    if (!detailimage) {
+      alert('No experience selected');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // 1) create user booking
+      const bookingResp = await fetch("/api/booking",{
+        method:"POST",
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          email: email,
+          place: detailimage.name,
+          date: selectedDate.toLocaleDateString('en-CA'),
+          slot: indexi,
+        })
+      });
+
+      if (!bookingResp.ok) {
+        const errBody = await bookingResp.json().catch(() => null);
+        console.error('Booking API error', errBody || bookingResp.status);
+        alert(errBody?.message || 'Booking failed');
+        return;
+      }
+
+      // 2) decrement seat availability
       const res = await fetch('/api/checkouts', {
         method: "POST",
         headers: {
@@ -32,40 +74,53 @@ function page({params}) {
       });
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const errBody = await res.json().catch(() => null);
+        console.error('Checkout API error', errBody || res.status);
+        alert(errBody?.message || 'Checkout failed');
+        return;
       }
 
       const data = await res.json();
       console.log("Booking successful:", data);
+      router.push("/confirmed")
       return data;
     } catch (error) {
       console.error("Booking failed:", error);
-      // You might want to show an error message to the user here
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!loading) checkouts();
   }
   
   return (
     <>
+    <form onSubmit={handleSubmit}>
     <div className='ml-[150px] mt-[80px] flex gap-[40px]'>
+      
         <div className='cursor-pointer flex gap-[10px] relative left-[130px] top-[-60px] mt-[20px] mb-[20px] h-[25px] justify-center items-center'>
    <Link href={`/details/${id}`} > <img className=' w-[13px] h-[13px]' src="/arrow_back.png" alt="" /></Link>    
         <p className='font-inter text-[14px] font-medium'>Checkout</p>
         </div>
     <div className='w-[739px] bg-[#EFEFEF] h-[200px] px-[24px] py-[20px] rounded-[12px]'>
-    <form action="#" >
+    
 
     <div className="flex   gap-4 mb-4">
         
         <div className="flex-1">
             <label htmlFor="full_name" className="block text-sm font-medium text-[#5B5B5B] mb-1">Full name</label>
-            <input type="text" id="full_name" name="full_name" placeholder="Your name" 
+            <input ref={username_ref} type="text" id="full_name" name="full_name" placeholder="Your name" 
                    className="placeholder:Inter placeholder:text-[14px] placeholder:text[#727272] w-full h-10 px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-150 ease-in-out"
             />
         </div>
 
         <div className="flex-1">
             <label htmlFor="email" className="block text-sm font-medium text-[#5B5B5B] mb-1">Email</label>
-            <input type="email" id="email" name="email" placeholder="Your name" 
+            <input ref={email_ref} type="email" id="email" name="email" placeholder="Your name" 
                    className=" placeholder:Inter placeholder:text-[14px] placeholder:text[#727272]  w-full h-10 px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-150 ease-in-out"
             />
         </div>
@@ -92,7 +147,7 @@ function page({params}) {
         </label>
     </div>
     
-    </form>
+    
     </div>
     <div className='w-[387px] px-[24px] py-[24px] bg-[#EFEFEF] flex flex-col gap-[16px] rounded-[12px]'>
         <div className='flex flex-col gap-[10px]'>
@@ -107,12 +162,24 @@ function page({params}) {
         </div>
         <div className='h-[1px] bg-[#D9D9D9]'></div>
         <p className='font-Inter text-[20px] font-medium flex justify-between'>Total <span>958</span></p>
+        {isClient && (
+        <div className='flex flex-col gap-[10px]'>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Experience <span className='text-[#161616] font-Inter text-[16px] capitalize'>{detailimage?.place}</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Date <span  className='text-[#161616] font-Inter text-[16px] capitalize' >{selectedDate.toLocaleDateString('en-GB').split('/').join('-')}</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Time <span className='text-[#161616] font-Inter text-[16px] capitalize' >{indexi}</span></p>
+            <p className='flex justify-between font-Inter text-[16px] text-[#656565]'>Qty  <span  className='text-[#161616] font-Inter text-[16px] capitalize'>1</span></p>
+        </div>
+        )}
         <div className='cursor-pointer px-[12px] py-[10px] bg-[#FFD643] text-center rounded-[8px]'>
-         <Link href={'/confirmed'}><button onClick={()=>checkouts()}>Pay and Confirm</button> </Link>   
-            </div>
+         <button type='submit' disabled={loading} className='w-full'>
+           {loading ? 'Processing...' : 'Pay and Confirm'}
+         </button>
+        </div>
 
     </div>
+  
     </div>
+    </form>
     </>
   )
 

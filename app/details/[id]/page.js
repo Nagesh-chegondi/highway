@@ -75,10 +75,7 @@ function Page({ params }) {
   if(id)  getdata();
   }, [id])
 
-  useEffect(()=>{
-console.log("hey i got you");
-console.log(producti);
-},[producti])
+
     
   
 

@@ -35,8 +35,26 @@ const BookingSchema = new mongoose.Schema({
   slot: { type: String, required: true },
   seats: { type: Number, default: 0 },
 });
+const UserBookingSchema = new mongoose.Schema({
+     username: {type:String, required: true},
+     email: {type:String, required: true},
+     booking:[{place:{type:String},
+      datebooking:[{
+        date:{type:String},
+      slot:[{
+        slot: {type:String, required:true},
+      bookedtickets: {type:String, required:true}
+    }]}
+  ]
+  }
+     ]
 
 
+})
+
+ export const  UserBooking = 
+ mongoose.models.UserBooking ||
+ mongoose.model("UserBooking", UserBookingSchema)
 
 // ✅ Prevent model recompilation in Next.js hot reload
 export const SeatAvailability =

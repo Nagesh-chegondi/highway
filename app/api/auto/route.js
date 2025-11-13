@@ -1,5 +1,5 @@
 
-import { connectDB, SeatAvailability, Booking } from "../../lib/db.js";
+import { connectDB, SeatAvailability, Booking ,UserBooking } from "../../lib/db.js";
 import { experiences } from "@/app/data/product.js";
 
 

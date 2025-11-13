@@ -15,7 +15,7 @@ function Image(props) {
        <p className='font-Inter text-[12px] font-regular text-[#6C6C6C]'>Curated small-group experience. Certified guide. Safety first with gear included. </p>
        </div>
        <div className='flex justify-between '>
-        <p className='font-Inter text-[12px] font-regular'>from <span className='font-Inter text-[20px] font-medium'>{props.price}</span> </p>
+        <p className='font-Inter text-[12px] font-regular'>from <span className='font-Inter text-[20px] font-medium'>₹{props.price}</span> </p>
        <Link href={ `/details/${props.id.toString()}`}><button className=' px-[8px] py-[6px] rounded-[4px] bg-[#FFD643] font-Inter text-[14px] font-medium'>view details</button></Link> 
        </div>
     </div>
